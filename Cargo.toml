@@ -1,0 +1,15 @@
+[package]
+name = "koukoku-ws-proxy"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+
+anyhow = "1.0.75"
+axum = { version = "0.6.20", features = ["ws"] }
+futures = "0.3.28"
+tokio = { version = "1.32.0", features = ["net","rt-multi-thread", "macros", "io-util"]}
+tokio-rustls = "0.24.1"
+webpki-roots = "0.25.2"
