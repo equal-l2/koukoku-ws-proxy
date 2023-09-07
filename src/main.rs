@@ -126,7 +126,7 @@ where
                 "\r\n",            // 通常
                 "\x1b[0m\x07\r\n", // 色付き終了
             ];
-            END_PATTERNS.iter().any(|s| buf.ends_with(s))
+            END_PATTERNS.iter().any(|s| &buf == s)
         };
         if is_start_msg() && !in_msg {
             debug!("start message");

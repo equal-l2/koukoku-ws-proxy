@@ -14,6 +14,8 @@
     <script lang="js">
       /** @type HTMLTextAreaElement */
       const msgView = document.getElementById("msg-view")
+      msgView.textContent = "" // HTMLでミスったとき用のフールプルーフ
+
       /** @type HTMLInputElement */
       const msgInput = document.getElementById("msg-input")
 
@@ -23,7 +25,21 @@
       /** @type HTMLButtonElement */
       const connectButton = document.getElementById("connect-button")
 
-      msgView.textContent = ""
+      // https://www.w3schools.com/howto/howto_js_trigger_button_enter.asp
+      msgInput.addEventListener("keypress", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          document.getElementById("send-button").click();
+        }
+      }); 
+
+      /**
+       * @param {string} s
+       */
+      function validate(s) {
+        if (s === "") { return false}
+        return true; // TODO
+      }
 
       function connect() {
         const sock = new WebSocket("ws://localhost:8080/ws")
@@ -38,7 +54,13 @@
 
             function send() {
               console.log("send")
-              sock.send(msgInput.value + "\n")
+              const msg = msgInput.value
+              if (validate(msg)) {
+                sock.send(msg + "\n")
+                msgInput.value = ""
+              } else {
+                alert("バリデーション失敗") // TODO: better UI
+              }
             }
             sendButton.onclick = send
 
