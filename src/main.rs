@@ -13,6 +13,9 @@ use tokio::{
     io::{AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt},
 };
 
+#[cfg(feature = "serve-ui")]
+use tower_http::services::ServeDir;
+
 const LISTEN_ADDR: &str = "127.0.0.1";
 const LISTEN_PORT: u16 = 8080;
 
@@ -55,7 +58,7 @@ async fn ws_handler(sock: WebSocket) {
     let stream = match connect_koukoku().await {
         Ok(inner) => inner,
         Err(e) => {
-            error!("Failed to connect with koukoku: {:?}", e);
+            error!("Failed to connect with koukoku: {e:?}");
             return;
         }
     };
@@ -80,7 +83,7 @@ async fn ws_handler(sock: WebSocket) {
     };
 
     if let Err(e) = res {
-        info!("WebSocket closed with error: {:?}", e);
+        info!("WebSocket closed with error: {e:?}");
     } else {
         info!("WebSocket closed");
     }
@@ -107,7 +110,7 @@ where
 
         // チャットメッセージのみを流す
         // TODO: 演説
-        trace!("RECV Content: {}", buf);
+        trace!("RECV Content: {buf}");
         trace!(
             "RECV bytes (first 5): {:?}",
             buf.bytes().collect::<Vec<_>>()
@@ -169,7 +172,7 @@ where
     while let Some(msg) = ws_rx.next().await {
         let msg = msg?;
         if let Message::Text(s) = msg {
-            debug!("SEND Content: {}", s);
+            debug!("SEND Content: {s}");
             ext_tx.write_all(s.as_bytes()).await?;
         }
     }
@@ -184,7 +187,11 @@ async fn get_handler(ws: WebSocketUpgrade) -> Response {
 #[tokio::main]
 async fn main() {
     pretty_env_logger::init();
+
     let app = Router::new().route(PROXY_ENDPOINT, get(get_handler));
+
+    #[cfg(feature = "serve-ui")]
+    let app = app.nest_service("/ui", ServeDir::new("./static"));
 
     let addr = (LISTEN_ADDR, LISTEN_PORT)
         .to_socket_addrs()
@@ -192,7 +199,19 @@ async fn main() {
         .next()
         .expect("should contain an entry");
 
-    eprintln!("Listening on port {}", LISTEN_PORT);
+    eprintln!("Listening on port {LISTEN_PORT}");
+    eprintln!();
+
+    eprintln!("WebSocket endpoint is available on `/ws`");
+    eprintln!("( Typically in form of http://localhost:{LISTEN_PORT}/ws )");
+
+    #[cfg(feature = "serve-ui")]
+    {
+        eprintln!();
+        eprintln!("Web UI is available on `/ui`");
+        eprintln!("( Typically in form of http://localhost:{LISTEN_PORT}/ui )");
+    }
+
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
