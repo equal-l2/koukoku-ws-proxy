@@ -10,6 +10,13 @@ edition = "2021"
 anyhow = "1.0.75"
 axum = { version = "0.6.20", features = ["ws"] }
 futures = "0.3.28"
-tokio = { version = "1.32.0", features = ["net","rt-multi-thread", "macros", "io-util"]}
+log = "0.4.20"
+pretty_env_logger = "0.5.0"
+tokio = { version = "1.32.0", features = [
+    "net",
+    "rt-multi-thread",
+    "macros",
+    "io-util",
+] }
 tokio-rustls = "0.24.1"
 webpki-roots = "0.25.2"
