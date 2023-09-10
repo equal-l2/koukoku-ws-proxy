@@ -1,6 +1,6 @@
 # Koukoku WS Proxy
 
-某公告 Telnet サーバ用の WebSocket プロクシです。
+某電子公告 Telnet サーバ用の WebSocket プロクシです。
 
 公告 →WS：放話のみを取り出して WebSocket に流します。  
 WS→ 公告：受け取った Message をそのまま公告サーバに流します。

@@ -1,0 +1,27 @@
+#view-container {
+  margin: auto;
+  margin-bottom: 1em;
+  height: 80vh;
+  display: flex;
+}
+
+#control {
+  display: flex;
+}
+
+.view {
+  flex-grow: 1;
+}
+
+p {
+  text-align: center;
+  margin: 1em;
+}
+
+textarea {
+  width: 90%;
+  height: 90%;
+  resize: none;
+  display: block;
+  margin: auto;
+}

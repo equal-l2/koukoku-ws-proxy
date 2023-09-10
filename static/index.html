@@ -3,22 +3,25 @@
   <head>
     <title>Koukoku Viewer</title>
     <meta charset="utf-8" />
-    <style>
-      #msg-view {
-        padding: auto;
-        width: 90%;
-        height: 80vh;
-      }
-    </style>
+    <link href="/ui/main.css" rel="stylesheet" />
   </head>
 
   <body>
-    <textarea id="msg-view" readonly></textarea>
-    <input id="msg-input" type="text" />
-    <button type="button" id="send-button" disabled>Submit</button>
-    <button type="button" id="connect-button" disabled>Connect</button>
-    <!-- TODO: 演説を別枠で表示する -->
-
-    <script src="./main.js"></script>
+    <div id="view-container">
+      <div class="view">
+        <p>放話</p>
+        <textarea id="houwa-view" readonly></textarea>
+      </div>
+      <div class="view">
+        <p>演説</p>
+        <textarea id="enzetsu-view" readonly></textarea>
+      </div>
+    </div>
+    <div id="control">
+      <input id="houwa-input" type="text" />
+      <button type="button" id="send-button" disabled>Submit</button>
+      <button type="button" id="connect-button" disabled>Connect</button>
+    </div>
+    <script src="/ui/main.js"></script>
   </body>
 </html>

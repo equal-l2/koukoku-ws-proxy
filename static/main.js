@@ -1,9 +1,11 @@
 /** @type HTMLTextAreaElement */
-const msgView = document.getElementById("msg-view");
-msgView.textContent = ""; // HTMLでミスったとき用のフールプルーフ
+const houwaView = document.getElementById("houwa-view");
+
+/** @type HTMLTextAreaElement */
+const enzetsuView = document.getElementById("enzetsu-view");
 
 /** @type HTMLInputElement */
-const msgInput = document.getElementById("msg-input");
+const houwaInput = document.getElementById("houwa-input");
 
 /** @type HTMLButtonElement */
 const sendButton = document.getElementById("send-button");
@@ -12,7 +14,7 @@ const sendButton = document.getElementById("send-button");
 const connectButton = document.getElementById("connect-button");
 
 // https://www.w3schools.com/howto/howto_js_trigger_button_enter.asp
-msgInput.addEventListener("keypress", (event) => {
+houwaInput.addEventListener("keypress", (event) => {
   if (event.key === "Enter") {
     event.preventDefault();
     document.getElementById("send-button").click();
@@ -34,18 +36,35 @@ function connect() {
   sock.onopen = () => {
     console.log("WS connected");
     function recv(ev) {
-      // assume the message is in text type
-      msgView.textContent += ev.data + "\n";
-      msgView.scrollTop = msgView.scrollHeight;
+      // handle only if the message is in text type
+      if (ev.data != null && typeof ev.data === "string") {
+        msg = JSON.parse(ev.data);
+        switch(msg.kind) {
+          case "Houwa": 
+            houwaView.textContent += msg.payload + "\n";
+            houwaView.scrollTop = houwaView.scrollHeight;
+            break;
+          case "Enzetsu": 
+          // 演説は無加工で送っているので改行等はそのまま使える
+          enzetsuView.textContent += msg.payload;
+          enzetsuView.scrollTop = enzetsuView.scrollHeight;
+          break;
+          default:
+            console.warn(`Unknown payload kind: ${msg.kind}`)
+            break;
+        }
+      } else {
+        console.warn(`Malformed message sent: ${ev.data}`)
+      }
     }
     sock.onmessage = recv;
 
     function send() {
       console.log("send");
-      const msg = msgInput.value;
-      if (validate(msg)) {
-        sock.send(msg + "\n");
-        msgInput.value = "";
+      const houwa = houwaInput.value;
+      if (validate(houwa)) {
+        sock.send(houwa + "\n");
+        houwaInput.value = "";
       } else {
         alert("バリデーション失敗"); // TODO: better UI
       }
