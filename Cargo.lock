@@ -496,6 +496,7 @@ dependencies = [
  "futures",
  "log",
  "miniserde",
+ "once_cell",
  "pretty_env_logger",
  "tokio",
  "tokio-rustls",

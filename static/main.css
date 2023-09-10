@@ -7,6 +7,8 @@
 
 #control {
   display: flex;
+  margin: auto;
+  justify-content: center;
 }
 
 .view {
@@ -24,4 +26,8 @@ textarea {
   resize: none;
   display: block;
   margin: auto;
+}
+
+#houwa-input {
+  width: 50vw;
 }
